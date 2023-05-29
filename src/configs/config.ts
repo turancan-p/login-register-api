@@ -7,9 +7,11 @@ const SECRET_KEY = "1234-secret-key."
 //for mongo
 const MONGO_USERNAME = '';
 const MONGO_PASSWORD = '';
-const MONGO_LINK = '';
-const MONGO_DBNAME = '';
-const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_LINK}/${MONGO_DBNAME}?retryWrites=true&w=majority`;
+
+const MONGO_HOST = '127.0.0.1';
+const MONGO_PORT = '27017';
+const MONGO_DBNAME = 'usersystem';
+const MONGO_URL = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DBNAME}`;
 
 //export
 export const config = {
