@@ -1,9 +1,22 @@
 import express from "express";
+import mongoose from 'mongoose';
 import { config } from "./configs/config";
 import http from 'http';
 
+import routers from "./routers";
+
 
 const app = express();
+
+//connect database and start server
+mongoose.connect(config.database.mongo.url).then(() => {
+    console.log('MongoDB connection established.');
+    startServer();
+}).catch((error) => {
+    console.log('MongoDB connection unable.');
+    console.log(error);
+});
+
 
 // Server start function
 const startServer = () => {
@@ -23,6 +36,9 @@ const startServer = () => {
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
 
+    // Add Routes
+    app.use("/", routers());
+
     //Health check
     app.get('/ping', (req,res,next) => res.status(200).json({message: 'pong'}));
 
@@ -36,6 +52,3 @@ const startServer = () => {
 
     http.createServer(app).listen(config.server.port, () => console.log(`API started on port: ${config.server.port}`));
 }
-
-
-startServer();
