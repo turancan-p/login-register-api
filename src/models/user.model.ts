@@ -6,11 +6,11 @@ export enum UserRoles {
 }
 
 export interface IUser {
-    name?: string;
-    userName?: string;
-    email?: string;
-    password?: string;
-    role?: UserRoles;
+    name: string;
+    userName: string;
+    email: string;
+    password: string;
+    role: UserRoles;
 }
 
 export interface IUserDocument extends IUser, Document {}
@@ -44,6 +44,12 @@ const User = model<IUserDocument, IUserModel>("users", UserSchema);
 
 export default User;
 
+//get user details
+export const userDetails =async (userName: string): Promise<IUserDocument | null> => {
+    const user = await User.findOne({userName: userName});
+    return user
+}
+
 //user create
 export const userCreate = async (userData: IUser): Promise<IUserDocument> => {
     const user = User.buildUser(userData);
@@ -55,11 +61,6 @@ export const userCreate = async (userData: IUser): Promise<IUserDocument> => {
 export const userUpdate =async (userName: string, userData: Partial<IUser>): Promise<IUserDocument | null> => {
     
     const user = await User.findOneAndUpdate({userName: userName}, userData, { new: true });
-
-    if (user) {
-        user.password = undefined;
-    }
-
     return user;
 };
 

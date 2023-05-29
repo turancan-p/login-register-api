@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import { config } from "../configs/config";
-import { userCreate, userDelete, userUpdate, UserRoles, IUser } from '../models/user.model';
+import { userCreate, userDelete, userUpdate, UserRoles, userDetails,IUser } from '../models/user.model';
 
 export const register = async (req: Request, res:Response, next: NextFunction) => {
     try {
@@ -18,10 +18,11 @@ export const register = async (req: Request, res:Response, next: NextFunction) =
 
         // create user datas
         const userData: IUser = {
-        name: name as string,
-        userName: userName as string,
-        email: email as string,
-        password: hashedPassword,
+            name: name as string,
+            userName: userName as string,
+            email: email as string,
+            password: hashedPassword as string,
+            role: UserRoles.user
         };
 
         // create user
@@ -29,7 +30,7 @@ export const register = async (req: Request, res:Response, next: NextFunction) =
 
         // if user created delete password data
         if (createdUser) {
-        createdUser.password = undefined;
+            createdUser.password = "";
         }
 
         // then response it
@@ -41,8 +42,53 @@ export const register = async (req: Request, res:Response, next: NextFunction) =
     } catch (error: any) { // you can also create custom error type and change "any" to it
         console.log("User create process failed.")
         res.status(400).json(
-            {
+        {
             message: error.message,
         });
+    }
+}
+
+export const login = async (req: Request, res:Response, next: NextFunction) => {
+    try {
+        const {userName, password} = req.body;
+        if(typeof userName != 'string' || typeof password != 'string'){
+            throw new Error('Invalid data type');
+        }
+
+        const user = await userDetails(userName);
+
+        if(!user){
+            throw new Error('Username or Password wrong.')
+        }
+
+        bcrypt.compare(password, user.password, (err, result) => {
+            if(err) {
+                throw new Error('Something wrong at line 65.');
+            }
+
+            if(!result){
+                throw new Error('Username or Password wrong.')
+            }else{
+                const userData = {
+                   name: user.name,
+                   userName: user.userName,
+                   role: user.role
+                }
+                
+                const token = jwt.sign(
+                {
+                    user: userData
+                },
+                config.token.secretKey,
+                {
+                    expiresIn :"2h"
+                })
+
+                res.header('Authorization', 'Bearer '+ token);
+                res.status(200).json({message: "Login successfull"})
+            }
+        })
+    } catch (error: any) {
+        res.status(400).json({message: error.message});
     }
 }
