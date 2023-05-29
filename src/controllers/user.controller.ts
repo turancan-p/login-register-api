@@ -7,7 +7,7 @@ import { userCreate, userDelete, userUpdate, UserRoles, IUser } from '../models/
 
 export const register = async (req: Request, res:Response, next: NextFunction) => {
     try {
-        const {name, userName, email, password} = req.query;
+        const {name, userName, email, password} = req.body;
 
         if (typeof name !== 'string' || typeof userName !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
             throw new Error('Invalid data type');
@@ -39,7 +39,9 @@ export const register = async (req: Request, res:Response, next: NextFunction) =
         });
         
     } catch (error: any) { // you can also create custom error type and change "any" to it
-        res.status(400).json({
+        console.log("User create process failed.")
+        res.status(400).json(
+            {
             message: error.message,
         });
     }
