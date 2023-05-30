@@ -8,7 +8,7 @@ const SECRET_KEY = "1234-secret-key."
 const MONGO_USERNAME = '';
 const MONGO_PASSWORD = '';
 
-const MONGO_HOST = 'mongodb';
+const MONGO_HOST = 'localhost';
 const MONGO_PORT = '27017';
 const MONGO_DBNAME = 'usersystem';
 const MONGO_URL = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DBNAME}`;

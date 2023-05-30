@@ -50,17 +50,22 @@ export const register = async (req: Request, res:Response, next: NextFunction) =
 
 export const login = async (req: Request, res:Response, next: NextFunction) => {
     try {
+        //get username and password from request body
         const {userName, password} = req.body;
+        //check the types because we don't know which type we got
+        // i just need the string
         if(typeof userName != 'string' || typeof password != 'string'){
             throw new Error('Invalid data type');
         }
 
+        // check if there is a user with this username
         const user = await userDetails(userName);
-
+        
         if(!user){
             throw new Error('Username or Password wrong.')
         }
 
+        // password compare
         bcrypt.compare(password, user.password, (err, result) => {
             if(err) {
                 throw new Error('Something wrong at line 65.');
@@ -69,12 +74,14 @@ export const login = async (req: Request, res:Response, next: NextFunction) => {
             if(!result){
                 throw new Error('Username or Password wrong.')
             }else{
+                // If we send user variable, all the data sent to the client, but we do not want it
+                // create new json and customize what data is sent to the client
                 const userData = {
                    name: user.name,
                    userName: user.userName,
                    role: user.role
                 }
-                
+                // generate token and send in response header
                 const token = jwt.sign(
                 {
                     user: userData
@@ -85,10 +92,18 @@ export const login = async (req: Request, res:Response, next: NextFunction) => {
                 })
 
                 res.header('Authorization', 'Bearer '+ token);
-                res.status(200).json({message: "Login successfull"})
+                res.status(200).json({message: "Login successfull", user: userData})
             }
         })
     } catch (error: any) {
         res.status(400).json({message: error.message});
+    }
+}
+
+export const testPage =async (req: Request, res:Response, next: NextFunction) => {
+    try {
+        res.status(200).json({message: "here we go."})
+    } catch (error) {
+        res.status(401).json({message: error})
     }
 }
