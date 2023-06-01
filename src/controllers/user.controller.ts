@@ -121,7 +121,27 @@ export const updateUser = async (req: RequestWithUser, res: Response, next: Next
   } catch (error: any) {
     res.status(400).json({message: error.message});
   }
-} 
+}
+
+export const deleteUser = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  try {
+    if(req.user !== undefined && req.user.userName !== undefined){
+      const userName = req.user.userName;
+        const deletedUser = await userDelete(userName);
+        console.log(deletedUser);
+        if(deletedUser !== undefined && deletedUser !== null){
+          res.status(200).json({message: "User deleted."})
+        }
+        else{
+          throw new Error("Failed to delete user.")
+        }
+    }else {
+      throw new Error("undefined")
+    }
+  } catch (error: any) {
+    res.status(400).json({"Error": error.message}) 
+  }
+}
 
 export const testPage =async (req: Request, res:Response, next: NextFunction) => {
   try {
