@@ -45,10 +45,7 @@ const User = model<IUserDocument, IUserModel>("users", UserSchema);
 export default User;
 
 //get user details
-export const userDetails =async (userName: string): Promise<IUserDocument | null> => {
-    const user = await User.findOne({userName: userName});
-    return user
-}
+export const userDetails = (userName: string): Promise<IUserDocument | null> => User.findOne({userName: userName});
 
 //user create
 export const userCreate = async (userData: IUser): Promise<IUserDocument> => {
@@ -61,4 +58,4 @@ export const userCreate = async (userData: IUser): Promise<IUserDocument> => {
 export const userUpdate = (userName: string, userData: Partial<IUser>): Promise<IUserDocument | null> => User.findOneAndUpdate({userName: userName}, userData, { new: true }).exec();
 
 //user delete
-export const userDelete = async (userName: string): Promise<void | null> => await User.findOneAndDelete({userName: userName});
+export const userDelete = async (userName: string): Promise<IUser | null> => await User.findOneAndDelete({userName: userName});
