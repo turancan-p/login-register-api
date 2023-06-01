@@ -19,10 +19,10 @@ export const register = async (req: Request, res:Response, next: NextFunction) =
 
     // create user datas
     const userData: IUser = {
-      name: name as string,
-      userName: userName as string,
-      email: email as string,
-      password: hashedPassword as string,
+      name: name,
+      userName: userName,
+      email: email,
+      password: hashedPassword,
       role: UserRoles.user
     };
 
@@ -56,7 +56,7 @@ export const login = async (req: Request, res:Response, next: NextFunction) => {
     //check the types because we don't know which type we got
     // i just need the string
     if(typeof userName != 'string' || typeof password != 'string'){
-      throw new Error('Invalid data type');
+      throw new Error('Invalid or missing parameters.');
     }
 
     // check if there is a user with this username
@@ -109,6 +109,7 @@ export const updateUser = async (req: RequestWithUser, res: Response, next: Next
         updateParams.userName = undefined
       }
       const userNewDatas = await userUpdate(req.user.userName, updateParams);
+
       //we cannot show user password to client
       if(userNewDatas?.password !== undefined){
         userNewDatas.password = "";
@@ -136,7 +137,7 @@ export const deleteUser = async (req: RequestWithUser, res: Response, next: Next
           throw new Error("Failed to delete user.")
         }
     }else {
-      throw new Error("undefined")
+      throw new Error("Invalid or missing parameters.")
     }
   } catch (error: any) {
     res.status(400).json({"Error": error.message}) 
@@ -154,10 +155,10 @@ export const detailUser = async (req: RequestWithUser, res:Response, next: NextF
         }
         res.status(200).json({message: user})
       }else {
-        throw new Error("User cannot found.")
+        throw new Error("User not found.")
       }
     }else {
-      throw new Error("Parameters missing.")
+      throw new Error("Invalid or missing parameters.")
     }
   } catch (error) {
     res.status(401).json({message: error})
