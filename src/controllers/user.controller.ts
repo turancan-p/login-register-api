@@ -143,9 +143,22 @@ export const deleteUser = async (req: RequestWithUser, res: Response, next: Next
   }
 }
 
-export const testPage =async (req: Request, res:Response, next: NextFunction) => {
+export const detailUser = async (req: RequestWithUser, res:Response, next: NextFunction) => {
   try {
-    res.status(200).json({message: "here we go."})
+    if(req.user !== undefined && req.user.userName !== undefined){
+      const userName = req.user.userName;
+      const user = await userDetails(userName);
+      if(user){
+        if(user.password !== undefined){
+          user.password = "";
+        }
+        res.status(200).json({message: user})
+      }else {
+        throw new Error("User cannot found.")
+      }
+    }else {
+      throw new Error("Parameters missing.")
+    }
   } catch (error) {
     res.status(401).json({message: error})
   }
