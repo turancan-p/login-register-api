@@ -1,4 +1,4 @@
-import mongoose, { Model, Schema, Document, model } from "mongoose";
+import { Model, Schema, Document, model } from "mongoose";
 
 export enum UserRoles {
     user = 'user',
@@ -58,11 +58,7 @@ export const userCreate = async (userData: IUser): Promise<IUserDocument> => {
 };
 
 //user update
-export const userUpdate =async (userName: string, userData: Partial<IUser>): Promise<IUserDocument | null> => {
-    
-    const user = await User.findOneAndUpdate({userName: userName}, userData, { new: true });
-    return user;
-};
+export const userUpdate = (userName: string, userData: Partial<IUser>): Promise<IUserDocument | null> => User.findOneAndUpdate({userName: userName}, userData, { new: true }).exec();
 
 //user delete
 export const userDelete = async (userName: string): Promise<void | null> => await User.findOneAndDelete({userName: userName});
